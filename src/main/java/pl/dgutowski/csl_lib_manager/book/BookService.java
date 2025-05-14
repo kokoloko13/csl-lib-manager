@@ -38,4 +38,11 @@ public class BookService {
 
         return bookRepository.save(foundBook);
     }
+
+    public boolean removeBook(UUID id) {
+        Book foundBook = getBookById(id);
+        bookRepository.deleteById(id);
+
+        return !bookRepository.existsById(id);
+    }
 }
