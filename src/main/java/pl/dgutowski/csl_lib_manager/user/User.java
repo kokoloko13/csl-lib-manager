@@ -1,5 +1,6 @@
 package pl.dgutowski.csl_lib_manager.user;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class User {
     private UUID id;
 
     @Email
+    @Column(unique = true)
     @NotBlank(message = "E-mail address cannot be empty")
     @Size(max = 150, message = "E-mail address cannot be longer than 150 characters")
     private String email;
