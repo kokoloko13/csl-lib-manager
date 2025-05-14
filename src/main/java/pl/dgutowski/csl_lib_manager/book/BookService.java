@@ -3,7 +3,7 @@ package pl.dgutowski.csl_lib_manager.book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import pl.dgutowski.csl_lib_manager.exception.HTTPException;
+import pl.dgutowski.csl_lib_manager.exception.ExceptionResponse;
 
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class BookService {
 
     public Book getBookById(UUID id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new HTTPException(HttpStatus.NOT_FOUND, "BOOK_NOT_FOUND"));
+                .orElseThrow(() -> new ExceptionResponse(HttpStatus.NOT_FOUND, "BOOK_NOT_FOUND"));
     }
 
     public List<Book> getListOfAllBooks() {
