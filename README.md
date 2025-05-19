@@ -95,3 +95,8 @@ Framework testowy
 
 ### Testcontainers
 Biblioteka umożliwiająca testowanie aplikacji na prawdziwej bazie danych.
+
+
+## PostgreSQL:
+
+`docker run -e POSTGRES_PASSWORD=CSLLibManager! -p 5432:5432 --name my_postgres -d postgres:latest`
