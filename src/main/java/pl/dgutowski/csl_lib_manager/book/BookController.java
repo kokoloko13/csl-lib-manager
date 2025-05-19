@@ -1,6 +1,7 @@
 package pl.dgutowski.csl_lib_manager.book;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,43 +13,44 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.dgutowski.csl_lib_manager.book.dto.BookDTO;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/api/v1/book")
+@RequiredArgsConstructor
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book>  getBook(@PathVariable UUID id) {
-        Book foundBook = bookService.getBookById(id);
+    public ResponseEntity<BookDTO> getBook(@Validated @PathVariable UUID id) {
+        BookDTO foundBook = bookService.getBookById(id);
         return ResponseEntity.ok(foundBook);
     }
 
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> bookList = bookService.getListOfAllBooks();
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
+        List<BookDTO> bookList = bookService.getListOfAllBooks();
         return ResponseEntity.ok(bookList);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Book> addBook(@Validated @RequestBody Book body) {
-        Book createdBook = bookService.createNewBook(body);
+    public ResponseEntity<BookDTO> addBook(@Valid @RequestBody BookDTO body) {
+        BookDTO createdBook = bookService.createNewBook(body);
         return ResponseEntity.status(201).body(createdBook);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable UUID id, @Validated @RequestBody Book body) {
-        Book updatedBook = bookService.updateBook(id, body);
+    @PutMapping
+    public ResponseEntity<BookDTO> updateBook(@Valid @RequestBody BookDTO body) {
+        BookDTO updatedBook = bookService.updateBook(body);
         return ResponseEntity.ok(updatedBook);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Book> deleteBook(@PathVariable UUID id) {
+    public ResponseEntity deleteBook(@Validated @PathVariable UUID id) {
         bookService.removeBook(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
