@@ -1,6 +1,5 @@
-package pl.dgutowski.csl_lib_manager.user;
+package pl.dgutowski.csl_lib_manager.user.dto;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

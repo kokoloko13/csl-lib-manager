@@ -1,31 +1,26 @@
 package pl.dgutowski.csl_lib_manager.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.dgutowski.csl_lib_manager.user.dto.UserDTO;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @GetMapping("/user")
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> userList = userService.getAllUsers();
         return ResponseEntity.ok(userList);
     }
-
-    @PostMapping("sign-up")
-    public ResponseEntity<UserDTO> signUp(@Validated @RequestBody UserDTO body) {
-        UserDTO user = userService.createNewUser(body);
-        return ResponseEntity.status(201).body(user);
-    }
-
 }
