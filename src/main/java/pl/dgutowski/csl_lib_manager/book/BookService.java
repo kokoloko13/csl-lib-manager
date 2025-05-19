@@ -1,46 +1,58 @@
 package pl.dgutowski.csl_lib_manager.book;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.dgutowski.csl_lib_manager.exception.ExceptionResponse;
-
+import pl.dgutowski.csl_lib_manager.book.dto.BookDTO;
+import pl.dgutowski.csl_lib_manager.exception.ExceptionMessage;
+import pl.dgutowski.csl_lib_manager.exception.ResourceNotFoundException;
+import pl.dgutowski.csl_lib_manager.utils.DtoUtils;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
-    @Autowired
-    BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
-    public Book getBookById(UUID id) {
+    private Book getRawBookById(UUID id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new ExceptionResponse(HttpStatus.NOT_FOUND, "BOOK_NOT_FOUND"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                                ExceptionMessage.RESOURCE_NOT_FOUND.formatted("Book", id.toString())
+                ));
     }
 
-    public List<Book> getListOfAllBooks() {
-        return bookRepository.findAll();
+    public BookDTO getBookById(UUID id) {
+        return DtoUtils.bookToDto(getRawBookById(id));
     }
 
-    public Book createNewBook(Book body) {
-        return bookRepository.save(body);
+    public List<BookDTO> getListOfAllBooks() {
+        return bookRepository.findAll().stream().map(DtoUtils::bookToDto).toList();
     }
 
-    public Book updateBook(UUID id, Book body) {
-        Book foundBook = getBookById(id);
+    public BookDTO createNewBook(BookDTO body) {
+        Book newBook = Book.builder()
+                .title(body.getTitle())
+                .author(body.getAuthor())
+                .pubYear(body.getPubYear())
+                .build();
+        return DtoUtils.bookToDto(bookRepository.save(newBook));
+    }
+
+    public BookDTO updateBook(BookDTO body) {
+        Book foundBook = getRawBookById(body.getId());
 
         foundBook.setPubYear(body.getPubYear());
         foundBook.setAuthor(body.getAuthor());
         foundBook.setTitle(body.getTitle());
 
 
-        return bookRepository.save(foundBook);
+        return DtoUtils.bookToDto(bookRepository.save(foundBook));
     }
 
     public boolean removeBook(UUID id) {
-        Book foundBook = getBookById(id);
+        Book foundBook = getRawBookById(id);
         bookRepository.deleteById(id);
 
         return !bookRepository.existsById(id);
